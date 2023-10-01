@@ -34,8 +34,15 @@ void processInput(GLFWwindow* window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+
+
 int main()
 {
+    
+    int nrAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, nrAttributes);
+    std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+
     glfwInit();
 
     //Since the focus of this book is on OpenGL version 3.3 we'd like to tell GLFW that 3.3 is the OpenGL 
@@ -134,12 +141,17 @@ int main()
      0.5f,  0.5f, 0.0f,  // top right
      0.5f, -0.5f, 0.0f,  // bottom right
     -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f   // top left 
+    -0.5f,  0.5f, 0.0f,   // top left
+     1.5f,  0.5f, 0.0f
     };
     unsigned int indices[] = {  // note that we start from 0!
         0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
+        1, 2, 3,    // second triangle
+        0, 4, 1
     };
+
+    int verticesLength = std::extent<decltype(indices)>::value;
+    int numberTriangles = verticesLength * 3;
 
     // The Vertex Shader Object allow us to store a larg number of vertices in the GPU memory
     unsigned int VBO, VAO, EBO;
@@ -162,6 +174,9 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    // uncomment this call to draw in wireframe polygons.
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     // RENDER LOOP ------------------------------------
     // The glfwWindowShouldClose function checks at the start of each loop iteration if GLFW has been instructed
     //  to close. If so, the function returns true and the render loop stops running, after which we can close 
@@ -180,7 +195,7 @@ int main()
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         //glDrawArrays(GL_TRIANGLES, 0, 3); // To draw the simple triangle using VBO
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, verticesLength, GL_UNSIGNED_INT, 0);
 
 
 
